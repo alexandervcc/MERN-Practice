@@ -13,6 +13,8 @@
     "express": "^4.17.1",
     "express-validation": "^3.0.8",
     "express-validator": "^6.13.0",
+    "mongoose": "^6.1.2",
+    "mongoose-unique-validator": "^3.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

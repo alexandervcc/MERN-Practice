@@ -15,7 +15,7 @@ router.get("/:pid", PlaceController.getPlaceById);
 router.get("/user/:uid", PlaceController.getUserById);
 
 //POST /:pid
-router.get(
+router.post(
     "/",
     [
         check('title').not().isEmpty(),
