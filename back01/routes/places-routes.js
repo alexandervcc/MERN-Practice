@@ -1,41 +1,39 @@
-const { check } = require('express-validator');
 const express = require('express');
+const { check } = require('express-validator');
 
-const HttpError = require('../model/http-error');
-const PlaceController = require('../controllers/places-controllers');
+const placesControllers = require('../controllers/places-controllers');
 
 const router = express.Router();
 
+router.get('/:pid', placesControllers.getPlaceById);
 
+router.get('/user/:uid', placesControllers.getPlacesByUserId);
 
-// GET /:pid
-router.get("/:pid", PlaceController.getPlaceById);
-
-// GET /:uid
-router.get("/user/:uid", PlaceController.getUserById);
-
-//POST /:pid
 router.post(
-    "/",
-    [
-        check('title').not().isEmpty(),
-        check('description').isLength({ min: 5 }),
-        check('address').not().isEmpty()
-    ],
-    PlaceController.postCreatePlace
+  '/',
+  [
+    check('title')
+      .not()
+      .isEmpty(),
+    check('description').isLength({ min: 5 }),
+    check('address')
+      .not()
+      .isEmpty()
+  ],
+  placesControllers.postCreatePlace
 );
 
-//PATCH /:pid
 router.patch(
-    '/:pid',
-    [
-        check('title').not().isEmpty(),
-        check('description').isLength({ min: 5 })
-    ],
-    PlaceController.patchUpdatePlace);
+  '/:pid',
+  [
+    check('title')
+      .not()
+      .isEmpty(),
+    check('description').isLength({ min: 5 })
+  ],
+  placesControllers.updatePlace
+);
 
-//DELETE /:pid
-router.delete('/:pid', PlaceController.deletePlace);
-
+router.delete('/:pid', placesControllers.deletePlace);
 
 module.exports = router;
