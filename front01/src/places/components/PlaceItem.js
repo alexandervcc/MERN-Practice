@@ -12,7 +12,7 @@ import './PlaceItem.css';
 
 const PlaceItem = props => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const auth = useContext(AuthContext);
+  const authCtx = useContext(AuthContext);
   const [showMap, setShowMap] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -32,11 +32,14 @@ const PlaceItem = props => {
     setShowConfirmModal(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${props.id}`,
-        'DELETE'
+        process.env.REACT_APP_BACKEND_URL + `/places/${props.id}`,
+        'DELETE',
+        null, {
+        Authorization: "Bearer " + authCtx.token
+      }
       );
       props.onDelete(props.id);
-    } catch (err) {}
+    } catch (err) { }
   };
 
   return (
@@ -79,7 +82,7 @@ const PlaceItem = props => {
         <Card className="place-item__content">
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img src={props.image} alt={props.title} />
+            <img src={process.env.REACT_APP_BACKEND_URL_IMAGES + `/${props.image}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>
@@ -90,11 +93,11 @@ const PlaceItem = props => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.userId === props.creatorId && (
+            {authCtx.userId === props.creatorId && (
               <Button to={`/places/${props.id}`}>EDIT</Button>
             )}
 
-            {auth.userId === props.creatorId && (
+            {authCtx.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>

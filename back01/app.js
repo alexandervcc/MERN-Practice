@@ -50,10 +50,9 @@ app.use((error, req, res, next) => {
 });
 
 const PORT = 5000;
+const DBURI=`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@nodejs01.mxnnt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 mongoose
-  .connect(
-    "mongodb+srv://mern01:mern01@nodejs01.mxnnt.mongodb.net/mern01?retryWrites=true&w=majority"
-  )
+  .connect(DBURI)
   .then(() => {
     app.listen(PORT);
     console.log("-----------RUNNING ON PORT",PORT,"-----------")
@@ -61,3 +60,10 @@ mongoose
   .catch(err => {
     console.log("Error: ",err);
   });
+
+
+/*NOTES
+  -multer:    save files
+  -bcryptjs:  encrypt the password
+  -jsonwebtoken
+*/

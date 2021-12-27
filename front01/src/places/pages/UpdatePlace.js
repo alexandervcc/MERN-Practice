@@ -16,7 +16,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import './PlaceForm.css';
 
 const UpdatePlace = () => {
-  const auth = useContext(AuthContext);
+  const authCtx = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
   const placeId = useParams().placeId;
@@ -40,7 +40,7 @@ const UpdatePlace = () => {
     const fetchPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          process.env.REACT_APP_BACKEND_URL + `/places/${placeId}`
         );
         setLoadedPlace(responseData.place);
         setFormData(
@@ -57,7 +57,7 @@ const UpdatePlace = () => {
           true
         );
 
-      } catch (err) {}
+      } catch (err) { }
     };
     fetchPlace();
   }, [sendRequest, placeId, setFormData]);
@@ -66,18 +66,19 @@ const UpdatePlace = () => {
     event.preventDefault();
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${placeId}`,
+        process.env.REACT_APP_BACKEND_URL + `/places/${placeId}`,
         'PATCH',
         JSON.stringify({
           title: formState.inputs.title.value,
           description: formState.inputs.description.value
         }),
         {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: "Bearer " + authCtx.token
         }
       );
-      history.push('/' + auth.userId + '/places');
-    } catch (err) {}
+      history.push('/' + authCtx.userId + '/places');
+    } catch (err) { }
   };
 
   if (isLoading) {

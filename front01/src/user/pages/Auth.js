@@ -17,7 +17,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import './Auth.css';
 
 const Auth = () => {
-  const auth = useContext(AuthContext);
+  const authCtx = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
@@ -66,11 +66,10 @@ const Auth = () => {
 
   const authSubmitHandler = async event => {
     event.preventDefault();
-    console.log(formState.inputs)
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          'http://localhost:5000/api/users/login',
+          process.env.REACT_APP_BACKEND_URL + '/users/login',
           'POST',
           JSON.stringify({
             email: formState.inputs.email.value,
@@ -80,8 +79,10 @@ const Auth = () => {
             'Content-Type': 'application/json'
           }
         );
-        auth.login(responseData.user.id);
-      } catch (err) { }
+        authCtx.login(responseData.userId, responseData.token);
+      } catch (err) {
+        console.log(err)
+      }
     } else {
       try {
 
@@ -92,13 +93,15 @@ const Auth = () => {
         formData.append("image", formState.inputs.image.value)
 
         const responseData = await sendRequest(
-          'http://localhost:5000/api/users/signup',
+          process.env.REACT_APP_BACKEND_URL + '/users/signup',
           'POST',
           formData
         );
 
-        auth.login(responseData.user.id);
-      } catch (err) { }
+        authCtx.login(responseData.userId, responseData.token);
+      } catch (err) {
+        console.log(err)
+      }
     }
   };
 
@@ -126,6 +129,7 @@ const Auth = () => {
               id="image"
               center
               onInput={inputHandler}
+              errorText="Please provide an Image"
             />
           }
           <Input
